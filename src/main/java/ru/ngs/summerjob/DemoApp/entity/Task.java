@@ -1,5 +1,6 @@
 package ru.ngs.summerjob.DemoApp.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -16,27 +17,28 @@ public class Task {
     @Column(name = "importance")
     private int importance;
 
-    @Column(name = "theme")
-    private String theme;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name = "theme_id")
+    @JsonManagedReference
+    private Theme themeType;
 
-    @Column(name = "shortName")
+    @Column(name = "short_name")
     private String shortName;
 
-    @Column(name = "fullDescription")
+    @Column(name = "full_description")
     private String fullDescription;
 
-    @Column(name = "startTime")
+    @Column(name = "start_time")
     private LocalDateTime startTime;
 
-    @Column(name = "endTime")
+    @Column(name = "end_time")
     private LocalDateTime endTime;
 
     public Task() {
     }
 
-    public Task(int importance, String theme, String shortName, String fullDescription, LocalDateTime startTime, LocalDateTime endTime) {
+    public Task(int importance, String shortName, String fullDescription, LocalDateTime startTime, LocalDateTime endTime) {
         this.importance = importance;
-        this.theme = theme;
         this.shortName = shortName;
         this.fullDescription = fullDescription;
         this.startTime = startTime;
@@ -59,12 +61,12 @@ public class Task {
         this.importance = importance;
     }
 
-    public String getTheme() {
-        return theme;
+    public Theme getThemeType() {
+        return themeType;
     }
 
-    public void setTheme(String theme) {
-        this.theme = theme;
+    public void setThemeType(Theme themeType) {
+        this.themeType = themeType;
     }
 
     public String getShortName() {
