@@ -31,6 +31,9 @@ public class Task {
     @Column(name = "endTime")
     private LocalDateTime endTime;
 
+    public Task() {
+    }
+
     public Task(int importance, String theme, String shortName, String fullDescription, LocalDateTime startTime, LocalDateTime endTime) {
         this.importance = importance;
         this.theme = theme;
