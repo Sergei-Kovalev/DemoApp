@@ -2,11 +2,10 @@ package ru.ngs.summerjob.DemoApp.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import ru.ngs.summerjob.DemoApp.entity.Task;
-import ru.ngs.summerjob.DemoApp.entity.Theme;
 import ru.ngs.summerjob.DemoApp.service.TaskService;
+import ru.ngs.summerjob.DemoApp.service.ThemeService;
 
 import java.util.List;
 
@@ -15,6 +14,9 @@ public class MyController {
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private ThemeService themeService;
 
     //just test
     @RequestMapping("/test")
@@ -55,4 +57,26 @@ public class MyController {
         taskService.saveTask(task);
         return task;
     }
+    //позволяет удалить задачу по id,
+    //если задачи в базе нет - пишет сообщение что её нет.
+    @DeleteMapping("/tasks/{id}")
+    public String deleteTaskById(@PathVariable int id) {
+        Task taskById = taskService.getTaskById(id);
+        if (taskById == null) {
+            return "There are no task with id:" + id + " in database";
+        } else {
+            taskService.deleteTaskById(id);
+            return "Task with id:" + id + " was deleted successfully";
+        }
+    }
+
+    //Предполагается доступ только администратору
+    //позволяет удалить тему по id,
+    //удаляет все задачи с этой темой.
+    @DeleteMapping("/themes/{id}")
+    public String deleteThemeById(@PathVariable int id) {
+        themeService.deleteThemeById(id);
+        return "Theme with id:" + id + " was deleted successfully";
+    }
+
 }

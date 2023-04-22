@@ -38,5 +38,11 @@ public class TaskServiceImpl implements TaskService {
         taskDAO.saveTask(task);
     }
 
+    @Override
+    @Transactional
+    public void deleteTaskById(int id) {
+        taskDAO.deleteTaskById(id);
+    }
+
 
 }

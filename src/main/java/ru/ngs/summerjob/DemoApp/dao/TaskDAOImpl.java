@@ -56,4 +56,11 @@ public class TaskDAOImpl implements TaskDAO {
         }
     }
 
+    @Override
+    public void deleteTaskById(int id) {
+        Query query = entityManager.createQuery("DELETE FROM Task WHERE id = :id")
+                .setParameter("id", id);
+        query.executeUpdate();
+    }
+
 }

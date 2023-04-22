@@ -1,6 +1,5 @@
 package ru.ngs.summerjob.DemoApp.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
