@@ -17,9 +17,9 @@ public class Task {
     @Column(name = "importance")
     private int importance;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
     @JoinColumn(name = "theme_id")
-    @JsonManagedReference
+//    @JsonManagedReference
     private Theme themeType;
 
     @Column(name = "short_name")
@@ -37,11 +37,11 @@ public class Task {
     public Task() {
     }
 
-    public Task(int importance, String shortName, String fullDescription, LocalDateTime startTime, LocalDateTime endTime) {
+    public Task(int importance, Theme themeType, String shortName, String fullDescription, LocalDateTime endTime) {
         this.importance = importance;
+        this.themeType = themeType;
         this.shortName = shortName;
         this.fullDescription = fullDescription;
-        this.startTime = startTime;
         this.endTime = endTime;
     }
 

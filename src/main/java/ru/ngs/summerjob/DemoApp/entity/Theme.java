@@ -18,7 +18,7 @@ public class Theme {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "themeType", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "themeType")
     @JsonBackReference
     private List<Task> tasks;
 

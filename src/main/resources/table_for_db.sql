@@ -33,4 +33,6 @@ VALUES
     (2, 1, 'clean the kitchen', 'Clean windows, gas stove, to throw out the trash, wash the dishes', '2025-01-01 23:00:00'),
     (1, 2, 'invite worker', 'Invite Kovalev Sergey for an internship', '2023-05-01 12:00:00'),
     (3, 3, 'buy new shoes', 'Go to the store and buy new training shoes', '2023-04-20 10:00:00'),
-    (4, 4, 'watch new film', 'check new film at cinema, if you find something interesting - watch it!', '2023-04-21 20:00:00');
+    (4, 4, 'watch new film', 'check new film at cinema, if you find something interesting - watch it!', '2023-04-21 20:00:00'),
+    (2, 2, 'invite worker', 'Invite Someone else', '2024-01-01 00:00:00');
+
