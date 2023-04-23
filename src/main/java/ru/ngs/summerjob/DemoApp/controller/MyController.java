@@ -4,6 +4,7 @@ package ru.ngs.summerjob.DemoApp.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.ngs.summerjob.DemoApp.entity.Task;
+import ru.ngs.summerjob.DemoApp.exception.TaskNotFoundException;
 import ru.ngs.summerjob.DemoApp.service.TaskService;
 import ru.ngs.summerjob.DemoApp.service.ThemeService;
 
@@ -30,10 +31,21 @@ public class MyController {
         return taskService.getAllTasks();
     }
 
+    //выдает список просроченных задач
+    @GetMapping("/getOverdueTasks")
+    public List<Task> getOverdueTasks() {
+        return taskService.getOverdueTasks();
+    }
+
     //поиск задачи по id
+    //если задачи с таким id нет, вернет ответ со статусом 404.
     @GetMapping("/tasks/{id}")
     public Task getTaskById(@PathVariable int id) {
-        return taskService.getTaskById(id);
+        Task task = taskService.getTaskById(id);
+        if (task == null) {
+            throw new TaskNotFoundException("Task with id = " + id + " does not exist in the database.");
+        }
+        return task;
     }
 
     //получение списка задач по имени темы (имена тем хранятся в отдельной таблице)
@@ -59,8 +71,9 @@ public class MyController {
     }
     //позволяет удалить задачу по id,
     //если задачи в базе нет - пишет сообщение что её нет.
+    //здесь ошибка не обрабатывается - так как результат метода сообщение.
     @DeleteMapping("/tasks/{id}")
-    public String deleteTaskById(@PathVariable int id) {
+    public String deleteTaskById(@PathVariable int id) throws TaskNotFoundException {
         Task taskById = taskService.getTaskById(id);
         if (taskById == null) {
             return "There are no task with id:" + id + " in database";

@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.ngs.summerjob.DemoApp.entity.Task;
 import ru.ngs.summerjob.DemoApp.entity.Theme;
+import ru.ngs.summerjob.DemoApp.exception.TaskNotFoundException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -25,7 +27,7 @@ public class TaskDAOImpl implements TaskDAO {
 
     // получение таска по id
     @Override
-    public Task getTaskById(int id) {
+    public Task getTaskById(int id) throws TaskNotFoundException {
         return entityManager.find(Task.class, id);
     }
 
@@ -40,6 +42,19 @@ public class TaskDAOImpl implements TaskDAO {
                 .setParameter("themeType", theme);
 
         return (List<Task>) query.getResultList();
+    }
+
+    @Override
+    public List<Task> getOverdueTasks() {
+        List<Task> overdueTasks = new ArrayList<>();
+        Query query = entityManager.createQuery("FROM Task");
+        List<Task> allTasks = query.getResultList();
+        allTasks.forEach(t -> {
+            if (t.getEndTime().isBefore(LocalDateTime.now())) {
+                overdueTasks.add(t);
+            }
+        });
+        return overdueTasks;
     }
 
     @Override
