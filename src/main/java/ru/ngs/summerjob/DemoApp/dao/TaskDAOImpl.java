@@ -31,19 +31,19 @@ public class TaskDAOImpl implements TaskDAO {
         return entityManager.find(Task.class, id);
     }
 
-    // получение тасков по определенной теме (тема берется по имени //TODO сделать проверку на существование темы с таким именем
+    // получение тасков по определенной теме (тема берется по имени выбор из списка на фронте)
     @Override
     public List<Task> getTaskByThemeName(String themeName) {
         Query query1 = entityManager.createQuery("SELECT theme FROM Theme theme WHERE theme.name = :name")
                 .setParameter("name", themeName);
         Theme theme = (Theme) query1.getSingleResult();
-
         Query query = entityManager.createQuery("SELECT t FROM Task t WHERE t.themeType = :themeType")
                 .setParameter("themeType", theme);
 
         return (List<Task>) query.getResultList();
     }
 
+    //получение списка просроченных задач
     @Override
     public List<Task> getOverdueTasks() {
         List<Task> overdueTasks = new ArrayList<>();

@@ -69,9 +69,10 @@ public class MyController {
         taskService.saveTask(task);
         return task;
     }
+
     //позволяет удалить задачу по id,
     //если задачи в базе нет - пишет сообщение что её нет.
-    //здесь ошибка не обрабатывается - так как результат метода сообщение.
+    //здесь ошибка не обрабатывается - так как результат метода = сообщение.
     @DeleteMapping("/tasks/{id}")
     public String deleteTaskById(@PathVariable int id) throws TaskNotFoundException {
         Task taskById = taskService.getTaskById(id);
