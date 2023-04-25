@@ -30,7 +30,7 @@ public class MySecurityConfig {
                                 .requestMatchers(HttpMethod.POST,"/tasks").hasAnyRole("USER", "ADMIN")
                                 .requestMatchers(HttpMethod.PUT,"/tasks").hasAnyRole("USER", "ADMIN")
                                 .requestMatchers(HttpMethod.DELETE,"/themes/**").hasRole("ADMIN")
-                                .anyRequest().authenticated().and().formLogin().permitAll();
+                                .anyRequest().authenticated().and().formLogin().permitAll().and().httpBasic();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
