@@ -2,9 +2,6 @@ package ru.ngs.summerjob.DemoApp;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
-import ru.ngs.summerjob.DemoApp.dao.TaskDAO;
 import ru.ngs.summerjob.DemoApp.entity.Task;
 import ru.ngs.summerjob.DemoApp.entity.Theme;
 import ru.ngs.summerjob.DemoApp.exception.IncorrectTask;
