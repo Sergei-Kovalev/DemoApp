@@ -44,6 +44,16 @@ public class Task {
         this.endTime = endTime;
     }
 
+    public Task(int id, int importance, Theme themeType, String shortName, String fullDescription, LocalDateTime startTime, LocalDateTime endTime) {
+        this.id = id;
+        this.importance = importance;
+        this.themeType = themeType;
+        this.shortName = shortName;
+        this.fullDescription = fullDescription;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
     public int getId() {
         return id;
     }

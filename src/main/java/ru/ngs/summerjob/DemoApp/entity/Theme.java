@@ -29,6 +29,12 @@ public class Theme {
         this.name = name;
     }
 
+    public Theme(int id, String name, List<Task> tasks) {
+        this.id = id;
+        this.name = name;
+        this.tasks = tasks;
+    }
+
     public void addTaskAtTheme(Task task) {
         if (tasks == null) {
             tasks = new ArrayList<>();
