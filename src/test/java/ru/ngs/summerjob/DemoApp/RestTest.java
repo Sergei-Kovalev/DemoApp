@@ -2,6 +2,7 @@ package ru.ngs.summerjob.DemoApp;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.EmptyResultDataAccessException;
 import ru.ngs.summerjob.DemoApp.entity.Task;
 import ru.ngs.summerjob.DemoApp.entity.Theme;
 import ru.ngs.summerjob.DemoApp.exception.IncorrectTask;
@@ -83,5 +84,49 @@ public class RestTest {
 
         Assertions.assertInstanceOf(IncorrectTask.class, incorrectTask);
         Assertions.assertEquals("Task with id = " + id + " does not exist in the database.", incorrectTask.getInfo());
+    }
+
+    //Проверка, что по запросу /tasks?themeName=name находит задачи с этой темой
+    @Test
+    public void checkTasksWithThemeName() {
+        Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationOk200());
+        String name = "work";
+        List<Task> tasks = given()
+                .when()
+                .get("/tasks?themeName=" + name)
+                .then().log().all()
+                .extract().body().jsonPath().getList(".", Task.class);
+
+        tasks.forEach(task -> Assertions.assertEquals("work", task.getThemeType().getName()));
+    }
+
+    //Проверка, что по запросу /tasks?themeName=name при неверное теме падает с ошибкой 400
+    //ПС: Исключение для данной ситуации не создавалось.. продемонтрировать разные подходы
+    // + предположение что на фронте реализован выбор из списка.
+    @Test
+    public void checkTasksWithIncorrectThemeName() {
+        Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationNotFound400());
+        String name = "wor";
+        IncorrectTask incorrectTask = given()
+                .when()
+                .get("/tasks?themeName=" + name)
+                .then().log().all()
+                .extract().body().as(IncorrectTask.class);
+
+        Assertions.assertTrue(incorrectTask.getInfo().contains("No result found for query"));
+    }
+
+
+    //Поверка, что в список по запросу /getOverdueTasks попадут просроченные задачи.
+    @Test
+    public void checkOverdueTask() {
+        Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationOk200());
+        List<Task> tasks = given()
+                .when()
+                .get("/getOverdueTasks")
+                .then().log().all()
+                .extract().body().jsonPath().getList(".", Task.class);
+
+        tasks.forEach(task -> Assertions.assertTrue(task.getEndTime().isBefore(LocalDateTime.now())));
     }
 }
