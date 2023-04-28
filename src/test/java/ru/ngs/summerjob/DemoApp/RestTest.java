@@ -2,7 +2,6 @@ package ru.ngs.summerjob.DemoApp;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.dao.EmptyResultDataAccessException;
 import ru.ngs.summerjob.DemoApp.entity.Task;
 import ru.ngs.summerjob.DemoApp.entity.Theme;
 import ru.ngs.summerjob.DemoApp.exception.IncorrectTask;
@@ -128,5 +127,128 @@ public class RestTest {
                 .extract().body().jsonPath().getList(".", Task.class);
 
         tasks.forEach(task -> Assertions.assertTrue(task.getEndTime().isBefore(LocalDateTime.now())));
+    }
+
+    //Проверка добавления новой задачи.
+    //проверяет поля получаемые от REST приложения.
+    //Если поля отправляемые - проверяет их правильность
+    //Если же поля возвращаемые - проверяет не пустые ли они
+    //Потом удаляем добавленную тестовую задачу
+    @Test
+    public void successPostAddNewTask() {
+        Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationOk200());
+        Task sentTask = new Task(5, new Theme(2), "Change it", "Find new job as soon as possible",
+                LocalDateTime.of(2024, 1, 1, 0, 0, 1));
+
+        Task answeredTask = given()
+                .body(sentTask)
+                .when()
+                .post("/tasks")
+                .then().log().all()
+                .extract().as(Task.class);
+
+        Assertions.assertTrue(answeredTask.getId() != 0);
+        Assertions.assertEquals(sentTask.getImportance(), answeredTask.getImportance());
+        Assertions.assertEquals(sentTask.getThemeType().getId(), answeredTask.getThemeType().getId());
+        Assertions.assertNotNull(answeredTask.getThemeType().getName());
+        Assertions.assertEquals(sentTask.getShortName(), answeredTask.getShortName());
+        Assertions.assertEquals(sentTask.getFullDescription(), answeredTask.getFullDescription());
+        Assertions.assertNotNull(answeredTask.getStartTime());
+        Assertions.assertEquals(sentTask.getEndTime(), answeredTask.getEndTime());
+
+        given()
+                .when()
+                .delete("/tasks/" + answeredTask.getId());
+    }
+
+    //Проверка как отрабатывает изменение существующего работника
+    @Test
+    public void successPostUpdateTask() {
+        Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationOk200());
+
+        //Взяли существующую в базе задачу
+        int idTaskForTest = 2;
+        Task taskForTest = given()
+                .when()
+                .get("/tasks/" + idTaskForTest)
+                .then().log().all()
+                .extract().as(Task.class);
+
+        //сохраняем в переменной изначальное описание задачи хранящейся в базе данных
+        String descriptionInDB = taskForTest.getFullDescription();
+        //заменяем описание
+        taskForTest.setFullDescription("Bla bla bla");
+
+        Task taskAfterUpdate = given()
+                .body(taskForTest)
+                .when()
+                .post("/tasks")
+                .then().log().all()
+                .extract().as(Task.class);
+        //проверяем правильно ли изменилось описание в базе данных
+        Assertions.assertEquals("Bla bla bla", taskAfterUpdate.getFullDescription());
+        //возвращаем старое поисание
+        taskForTest.setFullDescription(descriptionInDB);
+        //снова обновляем задание
+        Task reUpdated = given()
+                .body(taskForTest)
+                .when()
+                .post("/tasks")
+                .then().log().all()
+                .extract().as(Task.class);
+        //на всякий случай сверяем вернулось ли изначальное описание задачи в нужное поле из базы данных.
+        Assertions.assertEquals(descriptionInDB, reUpdated.getFullDescription());
+    }
+
+    //Проверка корректности ответа при отправке незаполненного запроса на добавление
+    @Test
+    public void wrongPostAddNewTask() {
+        Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationNotFound400());
+        Task sentTask = new Task();
+
+        IncorrectTask answeredTask = given()
+                .body(sentTask)
+                .when()
+                .post("/tasks")
+                .then().log().all()
+                .extract().as(IncorrectTask.class);
+
+        Assertions.assertTrue(answeredTask.getInfo().contains("Cannot invoke"));
+    }
+
+    //Проверка правильности отклика при удалении
+    //ПС в тесте сначала создается новая задача - берется её id и происходит удаление по id.
+    @Test
+    public void deleteTaskById() {
+        Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationOk200());
+        Task sentTask = new Task(5, new Theme(2), "Change it", "Find new job as soon as possible",
+                LocalDateTime.of(2024, 1, 1, 0, 0, 1));
+        Task answeredTask = given()
+                .body(sentTask)
+                .when()
+                .post("/tasks")
+                .then().log().all()
+                .extract().as(Task.class);
+
+        int idTaskForDeleteTest = answeredTask.getId();
+
+        String reply = given()
+                .when()
+                .delete("/tasks/" + idTaskForDeleteTest)
+                .then().extract().asString();
+
+        Assertions.assertEquals("Task with id:" + idTaskForDeleteTest + " was deleted successfully", reply);
+    }
+
+    @Test
+    public void deleteTaskWithWrongId() {
+        Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationOk200());
+        int id = 999999999;
+        String reply = given()
+                .when()
+                .delete("/tasks/" + id)
+                .then().extract().asString();
+
+        Assertions.assertEquals("There are no task with id:" + id + " in database", reply);
     }
 }

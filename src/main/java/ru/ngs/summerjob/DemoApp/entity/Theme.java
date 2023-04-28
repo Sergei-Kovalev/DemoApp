@@ -29,6 +29,10 @@ public class Theme {
         this.name = name;
     }
 
+    public Theme(int id) {
+        this.id = id;
+    }
+
     public Theme(int id, String name, List<Task> tasks) {
         this.id = id;
         this.name = name;
