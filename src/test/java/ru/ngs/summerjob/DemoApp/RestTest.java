@@ -216,8 +216,9 @@ public class RestTest {
         Assertions.assertTrue(answeredTask.getInfo().contains("Cannot invoke"));
     }
 
-    //Проверка правильности отклика при удалении
-    //ПС в тесте сначала создается новая задача - берется её id и происходит удаление по id.
+    //Проверка правильности отклика при удалении.
+    //ПС в тесте сначала создается новая задача - берется её id и происходит удаление по id,
+    // чтобы не оставлять "мусор" в базе данных после тестирования.
     @Test
     public void deleteTaskById() {
         Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationOk200());
