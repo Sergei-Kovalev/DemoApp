@@ -13,7 +13,7 @@ public class ThemeDAOImpl implements ThemeDAO {
 
     @Override
     public void deleteThemeById(int id) {
-        Query query2 = entityManager.createQuery("DELETE FROM Task WHERE themeType.id = :id")
+        Query query2 = entityManager.createQuery("DELETE FROM Task WHERE theme.id = :id")
                 .setParameter("id", id);
         query2.executeUpdate();
 

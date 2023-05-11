@@ -18,7 +18,7 @@ public class Theme {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "themeType", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "theme", cascade = CascadeType.ALL)
     @JsonBackReference
     private List<Task> tasks;
 
@@ -44,7 +44,7 @@ public class Theme {
             tasks = new ArrayList<>();
         }
         tasks.add(task);
-        task.setThemeType(this);
+        task.setTheme(this);
     }
 
     public int getId() {

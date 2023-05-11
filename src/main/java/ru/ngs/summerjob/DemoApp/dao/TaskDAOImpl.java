@@ -9,7 +9,6 @@ import ru.ngs.summerjob.DemoApp.entity.Theme;
 import ru.ngs.summerjob.DemoApp.exception.TaskNotFoundException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -37,8 +36,8 @@ public class TaskDAOImpl implements TaskDAO {
         Query query1 = entityManager.createQuery("SELECT theme FROM Theme theme WHERE theme.name = :name")
                 .setParameter("name", themeName);
         Theme theme = (Theme) query1.getSingleResult();
-        Query query = entityManager.createQuery("SELECT t FROM Task t WHERE t.themeType = :themeType")
-                .setParameter("themeType", theme);
+        Query query = entityManager.createQuery("SELECT t FROM Task t WHERE t.theme = :theme")
+                .setParameter("theme", theme);
 
         return (List<Task>) query.getResultList();
     }
@@ -52,14 +51,14 @@ public class TaskDAOImpl implements TaskDAO {
 
     @Override
     public void saveTask(Task task) {
-        int id = task.getThemeType().getId();
+        int id = task.getTheme().getId();
         Theme theme = entityManager.find(Theme.class, id);
         if (task.getId() == 0) {
-            task.setThemeType(theme);
+            task.setTheme(theme);
             task.setStartTime(LocalDateTime.now());
             entityManager.persist(task);
         } else {
-            task.setThemeType(theme);
+            task.setTheme(theme);
             entityManager.merge(task);
         }
     }

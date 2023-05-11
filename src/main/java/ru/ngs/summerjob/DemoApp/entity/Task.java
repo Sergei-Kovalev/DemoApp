@@ -19,7 +19,7 @@ public class Task {
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
     @JoinColumn(name = "theme_id")
 //    @JsonManagedReference
-    private Theme themeType;
+    private Theme theme;
 
     @Column(name = "short_name")
     private String shortName;
@@ -36,18 +36,18 @@ public class Task {
     public Task() {
     }
 
-    public Task(int importance, Theme themeType, String shortName, String fullDescription, LocalDateTime endTime) {
+    public Task(int importance, Theme theme, String shortName, String fullDescription, LocalDateTime endTime) {
         this.importance = importance;
-        this.themeType = themeType;
+        this.theme = theme;
         this.shortName = shortName;
         this.fullDescription = fullDescription;
         this.endTime = endTime;
     }
 
-    public Task(int id, int importance, Theme themeType, String shortName, String fullDescription, LocalDateTime startTime, LocalDateTime endTime) {
+    public Task(int id, int importance, Theme theme, String shortName, String fullDescription, LocalDateTime startTime, LocalDateTime endTime) {
         this.id = id;
         this.importance = importance;
-        this.themeType = themeType;
+        this.theme = theme;
         this.shortName = shortName;
         this.fullDescription = fullDescription;
         this.startTime = startTime;
@@ -70,12 +70,12 @@ public class Task {
         this.importance = importance;
     }
 
-    public Theme getThemeType() {
-        return themeType;
+    public Theme getTheme() {
+        return theme;
     }
 
-    public void setThemeType(Theme themeType) {
-        this.themeType = themeType;
+    public void setTheme(Theme theme) {
+        this.theme = theme;
     }
 
     public String getShortName() {
