@@ -46,15 +46,8 @@ public class TaskDAOImpl implements TaskDAO {
     //получение списка просроченных задач
     @Override
     public List<Task> getOverdueTasks() {
-        List<Task> overdueTasks = new ArrayList<>();
-        Query query = entityManager.createQuery("FROM Task");
-        List<Task> allTasks = query.getResultList();
-        allTasks.forEach(t -> {
-            if (t.getEndTime().isBefore(LocalDateTime.now())) {
-                overdueTasks.add(t);
-            }
-        });
-        return overdueTasks;
+        Query query = entityManager.createQuery("SELECT task FROM Task task WHERE task.endTime < CURRENT_DATE()");
+        return (List<Task>) query.getResultList();
     }
 
     @Override
