@@ -27,7 +27,12 @@ public class TaskDAOImpl implements TaskDAO {
     // получение таска по id
     @Override
     public Task getTaskById(int id) throws TaskNotFoundException {
-        return entityManager.find(Task.class, id);
+        Task task = entityManager.find(Task.class, id);
+        if (task == null) {
+            throw new TaskNotFoundException("Task with id = " + id + " does not exist in the database.");
+        } else {
+            return task;
+        }
     }
 
     // получение тасков по определенной теме (тема берется по имени выбор из списка на фронте)
@@ -50,7 +55,7 @@ public class TaskDAOImpl implements TaskDAO {
     }
 
     @Override
-    public void saveTask(Task task) {
+    public Task saveTask(Task task) {
         int id = task.getTheme().getId();
         Theme theme = entityManager.find(Theme.class, id);
         if (task.getId() == 0) {
@@ -61,10 +66,12 @@ public class TaskDAOImpl implements TaskDAO {
             task.setTheme(theme);
             entityManager.merge(task);
         }
+        return task;
     }
 
     @Override
     public void deleteTaskById(int id) {
+        Task task = getTaskById(id);        //чтобы выбросить эксепшн если задачи с таким id нет в базе данных.
         Query query = entityManager.createQuery("DELETE FROM Task WHERE id = :id")
                 .setParameter("id", id);
         query.executeUpdate();

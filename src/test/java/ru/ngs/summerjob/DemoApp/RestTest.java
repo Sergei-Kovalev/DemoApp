@@ -243,13 +243,15 @@ public class RestTest {
 
     @Test
     public void deleteTaskWithWrongId() {
-        Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationOk200());
+        Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationNotFound404());
         int id = 999999999;
-        String reply = given()
+        IncorrectTask incorrectTask = given()
                 .when()
-                .delete("/tasks/" + id)
-                .then().extract().asString();
+                .get("/tasks/" + id)
+                .then().log().all()
+                .extract().body().as(IncorrectTask.class);
 
-        Assertions.assertEquals("There are no task with id:" + id + " in database", reply);
+        Assertions.assertInstanceOf(IncorrectTask.class, incorrectTask);
+        Assertions.assertEquals("Task with id = " + id + " does not exist in the database.", incorrectTask.getInfo());
     }
 }
