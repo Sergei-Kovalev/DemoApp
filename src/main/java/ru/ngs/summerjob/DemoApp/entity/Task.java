@@ -18,7 +18,6 @@ public class Task {
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
     @JoinColumn(name = "theme_id")
-//    @JsonManagedReference
     private Theme theme;
 
     @Column(name = "short_name")

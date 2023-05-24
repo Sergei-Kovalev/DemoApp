@@ -1,6 +1,5 @@
 package ru.ngs.summerjob.DemoApp.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ public class Theme {
     private String name;
 
     @OneToMany(mappedBy = "theme", cascade = CascadeType.ALL)
-    @JsonBackReference
     private List<Task> tasks;
 
     public Theme() {

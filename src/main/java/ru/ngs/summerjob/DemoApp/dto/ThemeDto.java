@@ -1,7 +1,5 @@
 package ru.ngs.summerjob.DemoApp.dto;
 
-import java.util.List;
-
 public class ThemeDto {
     private Integer id;
     private String name;

@@ -76,5 +76,4 @@ public class TaskDAOImpl implements TaskDAO {
                 .setParameter("id", id);
         query.executeUpdate();
     }
-
 }
