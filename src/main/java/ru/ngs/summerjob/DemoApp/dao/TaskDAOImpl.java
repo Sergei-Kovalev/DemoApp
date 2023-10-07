@@ -9,7 +9,6 @@ import ru.ngs.summerjob.DemoApp.entity.Theme;
 import ru.ngs.summerjob.DemoApp.exception.TaskNotFoundException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -28,7 +27,12 @@ public class TaskDAOImpl implements TaskDAO {
     // получение таска по id
     @Override
     public Task getTaskById(int id) throws TaskNotFoundException {
-        return entityManager.find(Task.class, id);
+        Task task = entityManager.find(Task.class, id);
+        if (task == null) {
+            throw new TaskNotFoundException("Task with id = " + id + " does not exist in the database.");
+        } else {
+            return task;
+        }
     }
 
     // получение тасков по определенной теме (тема берется по имени выбор из списка на фронте)
@@ -37,8 +41,8 @@ public class TaskDAOImpl implements TaskDAO {
         Query query1 = entityManager.createQuery("SELECT theme FROM Theme theme WHERE theme.name = :name")
                 .setParameter("name", themeName);
         Theme theme = (Theme) query1.getSingleResult();
-        Query query = entityManager.createQuery("SELECT t FROM Task t WHERE t.themeType = :themeType")
-                .setParameter("themeType", theme);
+        Query query = entityManager.createQuery("SELECT t FROM Task t WHERE t.theme = :theme")
+                .setParameter("theme", theme);
 
         return (List<Task>) query.getResultList();
     }
@@ -46,36 +50,30 @@ public class TaskDAOImpl implements TaskDAO {
     //получение списка просроченных задач
     @Override
     public List<Task> getOverdueTasks() {
-        List<Task> overdueTasks = new ArrayList<>();
-        Query query = entityManager.createQuery("FROM Task");
-        List<Task> allTasks = query.getResultList();
-        allTasks.forEach(t -> {
-            if (t.getEndTime().isBefore(LocalDateTime.now())) {
-                overdueTasks.add(t);
-            }
-        });
-        return overdueTasks;
+        Query query = entityManager.createQuery("SELECT task FROM Task task WHERE task.endTime < CURRENT_DATE()");
+        return (List<Task>) query.getResultList();
     }
 
     @Override
-    public void saveTask(Task task) {
-        int id = task.getThemeType().getId();
+    public Task saveTask(Task task) {
+        int id = task.getTheme().getId();
         Theme theme = entityManager.find(Theme.class, id);
         if (task.getId() == 0) {
-            task.setThemeType(theme);
+            task.setTheme(theme);
             task.setStartTime(LocalDateTime.now());
             entityManager.persist(task);
         } else {
-            task.setThemeType(theme);
+            task.setTheme(theme);
             entityManager.merge(task);
         }
+        return task;
     }
 
     @Override
     public void deleteTaskById(int id) {
+        Task task = getTaskById(id);        //чтобы выбросить эксепшн если задачи с таким id нет в базе данных.
         Query query = entityManager.createQuery("DELETE FROM Task WHERE id = :id")
                 .setParameter("id", id);
         query.executeUpdate();
     }
-
 }

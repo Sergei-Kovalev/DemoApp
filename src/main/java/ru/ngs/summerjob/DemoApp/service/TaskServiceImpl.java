@@ -41,8 +41,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public void saveTask(Task task) {
-        taskDAO.saveTask(task);
+    public Task saveTask(Task task) {
+        return taskDAO.saveTask(task);
     }
 
     @Override
@@ -50,6 +50,4 @@ public class TaskServiceImpl implements TaskService {
     public void deleteTaskById(int id) {
         taskDAO.deleteTaskById(id);
     }
-
-
 }

@@ -1,6 +1,5 @@
 package ru.ngs.summerjob.DemoApp.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -18,8 +17,7 @@ public class Theme {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "themeType", cascade = CascadeType.ALL)
-    @JsonBackReference
+    @OneToMany(mappedBy = "theme", cascade = CascadeType.ALL)
     private List<Task> tasks;
 
     public Theme() {
@@ -44,7 +42,7 @@ public class Theme {
             tasks = new ArrayList<>();
         }
         tasks.add(task);
-        task.setThemeType(this);
+        task.setTheme(this);
     }
 
     public int getId() {

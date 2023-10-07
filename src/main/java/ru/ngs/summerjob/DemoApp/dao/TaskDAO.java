@@ -15,7 +15,7 @@ public interface TaskDAO {
 
     List<Task> getOverdueTasks();
 
-    void saveTask(Task task);
+    Task saveTask(Task task);
 
     void deleteTaskById(int id);
 }

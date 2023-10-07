@@ -1,49 +1,20 @@
-package ru.ngs.summerjob.DemoApp.entity;
-
-import jakarta.persistence.*;
+package ru.ngs.summerjob.DemoApp.dto;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "tasks")
-public class Task {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
-
-    @Column(name = "importance")
-    private int importance;
-
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
-    @JoinColumn(name = "theme_id")
-    private Theme theme;
-
-    @Column(name = "short_name")
+public class TaskDto {
+    private Integer id;
+    private Integer importance;
+    private ThemeDto theme;
     private String shortName;
-
-    @Column(name = "full_description")
     private String fullDescription;
-
-    @Column(name = "start_time")
     private LocalDateTime startTime;
-
-    @Column(name = "end_time")
     private LocalDateTime endTime;
 
-    public Task() {
+    public TaskDto() {
     }
 
-    public Task(int importance, Theme theme, String shortName, String fullDescription, LocalDateTime endTime) {
-        this.importance = importance;
-        this.theme = theme;
-        this.shortName = shortName;
-        this.fullDescription = fullDescription;
-        this.endTime = endTime;
-    }
-
-    public Task(int id, int importance, Theme theme, String shortName, String fullDescription, LocalDateTime startTime, LocalDateTime endTime) {
+    public TaskDto(Integer id, Integer importance, ThemeDto theme, String shortName, String fullDescription, LocalDateTime startTime, LocalDateTime endTime) {
         this.id = id;
         this.importance = importance;
         this.theme = theme;
@@ -53,27 +24,27 @@ public class Task {
         this.endTime = endTime;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getImportance() {
+    public Integer getImportance() {
         return importance;
     }
 
-    public void setImportance(int importance) {
+    public void setImportance(Integer importance) {
         this.importance = importance;
     }
 
-    public Theme getTheme() {
+    public ThemeDto getTheme() {
         return theme;
     }
 
-    public void setTheme(Theme theme) {
+    public void setTheme(ThemeDto theme) {
         this.theme = theme;
     }
 
@@ -107,5 +78,18 @@ public class Task {
 
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
+    }
+
+    @Override
+    public String toString() {
+        return "TaskDto{" +
+                "id=" + id +
+                ", importance=" + importance +
+                ", theme=" + theme +
+                ", shortName='" + shortName + '\'' +
+                ", fullDescription='" + fullDescription + '\'' +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                '}';
     }
 }

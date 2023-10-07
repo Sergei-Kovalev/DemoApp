@@ -35,7 +35,7 @@ public class RestTest {
                 .when()
                 .get("/getAllTasks")
                 .then().log().all()
-                .extract().body().jsonPath().getList("themeType", Theme.class);
+                .extract().body().jsonPath().getList("theme", Theme.class);
 
         Assertions.assertEquals("home", themes.get(0).getName());
     }
@@ -96,7 +96,7 @@ public class RestTest {
                 .then().log().all()
                 .extract().body().jsonPath().getList(".", Task.class);
 
-        tasks.forEach(task -> Assertions.assertEquals("work", task.getThemeType().getName()));
+        tasks.forEach(task -> Assertions.assertEquals("work", task.getTheme().getName()));
     }
 
     //Проверка, что по запросу /tasks?themeName=name при неверное теме падает с ошибкой 400
@@ -149,8 +149,8 @@ public class RestTest {
 
         Assertions.assertTrue(answeredTask.getId() != 0);
         Assertions.assertEquals(sentTask.getImportance(), answeredTask.getImportance());
-        Assertions.assertEquals(sentTask.getThemeType().getId(), answeredTask.getThemeType().getId());
-        Assertions.assertNotNull(answeredTask.getThemeType().getName());
+        Assertions.assertEquals(sentTask.getTheme().getId(), answeredTask.getTheme().getId());
+        Assertions.assertNotNull(answeredTask.getTheme().getName());
         Assertions.assertEquals(sentTask.getShortName(), answeredTask.getShortName());
         Assertions.assertEquals(sentTask.getFullDescription(), answeredTask.getFullDescription());
         Assertions.assertNotNull(answeredTask.getStartTime());
@@ -243,13 +243,15 @@ public class RestTest {
 
     @Test
     public void deleteTaskWithWrongId() {
-        Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationOk200());
+        Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationNotFound404());
         int id = 999999999;
-        String reply = given()
+        IncorrectTask incorrectTask = given()
                 .when()
-                .delete("/tasks/" + id)
-                .then().extract().asString();
+                .get("/tasks/" + id)
+                .then().log().all()
+                .extract().body().as(IncorrectTask.class);
 
-        Assertions.assertEquals("There are no task with id:" + id + " in database", reply);
+        Assertions.assertInstanceOf(IncorrectTask.class, incorrectTask);
+        Assertions.assertEquals("Task with id = " + id + " does not exist in the database.", incorrectTask.getInfo());
     }
 }

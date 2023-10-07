@@ -10,6 +10,6 @@ public interface TaskService {
     Task getTaskById(int id) throws TaskNotFoundException;
     List<Task> getTaskByThemeName(String themeName);
     List<Task> getOverdueTasks();
-    void saveTask(Task task);
+    Task saveTask(Task task);
     void deleteTaskById(int id);
 }
